@@ -5,10 +5,14 @@
 #include <vector>
 #include <utility>
 
-Index::add(const std::string& word, const PostingRecord& rec) {
-  idx.insert({word, rec});
+void Index::add(const std::string& word, const PostingRecord& rec) {
+  idx[word].emplace(rec);
 }
 
-std::vector<std::pair<int, int>>& getRecords(const std::string) {
+std::vector<std::pair<int, int>> Index::getRecords(const std::string) {
+  return {{}};
+}
+
+void Index::add(const std::string& word, const int pagenum, const int doc_id) {
 
 }

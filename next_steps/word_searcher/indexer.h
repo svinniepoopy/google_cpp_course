@@ -7,24 +7,34 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 class Indexer {
   public:
 
-    Indexer():do_scrub{false} {}
+    Indexer(const std::string& ignoreddir, const std::string& corpusdir):
+      do_scrub{false},
+      ignored_words_dir{ignoreddir},
+      corpus_dir{corpusdir} {}
 
-    void addIgnoredWordsFromFile(const std::string& file);
 
-    void processLine(const std::string& line, const int pagenum, const int doc_id);
+    void processIgnoredWords();
 
     bool processFile(const std::string& file, const int doc_id);
 
-    std::vector<std::pair<int, int>> find(const std::string& word);
+    void summarize() const;
+
+    void writeToDisk();
 
   private:
+    void processLine(const std::string& line, const int pagenum, const int doc_id);
+
     bool do_scrub;
-    std::unordered_map<std::string> ignored_words; 
+    
+    std::string ignored_words_dir;
+    std::string corpus_dir;
+
+    std::unordered_set<std::string> ignored_words; 
     std::unique_ptr<Index> index = std::make_unique<Index>();
 };
 

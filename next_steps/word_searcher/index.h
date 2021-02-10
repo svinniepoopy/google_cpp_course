@@ -11,12 +11,14 @@
 
 class Index {
   public:
-    void add(const std::string word, const PostingRecord& rec);
+    void add(const std::string& word, const PostingRecord& rec);
 
-    std::vector<std::pair<int, int>>& getRecords(const std::string);
+    void add(const std::string&, const int pagenum, const int doc_id);
+
+    std::vector<std::pair<int, int>> getRecords(const std::string);
 
   private:
-    std::unordered_map<std::string, std::set<PostingRecord>> idx;
-}:
+    std::unordered_map<std::string, std::set<PostingRecord, PostingRecordCompare>> idx;
+};
 
 #endif // INDEX_STORE_H

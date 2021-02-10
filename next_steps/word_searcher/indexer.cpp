@@ -1,15 +1,13 @@
 #include "index.h"
 #include "indexer.h"
-#include "str_utility.h"
+#include "util.h"
 
-#include <istringstream>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
-
-Indexer::addIgnoredWordsFromFile(const std::string& file) {
-
-}
 
 void Indexer::processLine(
     const std::string& line,
@@ -20,12 +18,15 @@ void Indexer::processLine(
   std::string word;
   while (istr>>word) {
     if (do_scrub) {
-      util::scub(word);
+      util::scrub(word);
     }
-    index->add(word, pagenum, doc_id);
+    if (ignored_words.find(word) == ignored_words.end()) {
+      index->add(word, pagenum, doc_id);
+    }
   }
 
 }
+
 
 bool Indexer::processFile(const std::string& file, const int doc_id) {
       std::ifstream ifs{file, std::ios::in};
@@ -33,25 +34,44 @@ bool Indexer::processFile(const std::string& file, const int doc_id) {
 	return false;
       }
 
-      int total_freq;
-      int page_freq;
       int page_num = 1;
       int line_no = 1;
-
       while (!ifs.eof()) {
+	std::string line;
 	std::getline(ifs, line);
-	processLine(line, pagenum, doc_id);
+	processLine(line, page_num, doc_id);
 	++line_no;
 	if (line_no>0 && line_no%100==0) {
 	  ++page_num;
 	  line_no = 1;
 	}
       }
-
       return true;
-    }
 }
 
-std::vector<std::pair<int, int>> Indexer::find(const std::string& word) {
+void Indexer::processIgnoredWords() {
+  namespace fs = std::filesystem;
+  std::vector<std::string> files;
+  for (const auto& p: fs::directory_iterator(ignored_words_dir)) {
+    files.push_back(p.path().c_str());
+  }
+  for (const auto& file:files) {
+    std::ifstream ifs{file, std::ios::in};
+    if (!ifs.is_open()) {
+      return; // throw exception here
+    }
+    while (!ifs.eof()) {
+      std::string word;
+      std::getline(ifs, word);
+      ignored_words.insert(word);
+    }
+  }
+}
+
+void Indexer::writeToDisk() {
+
+}
+
+void Indexer::summarize() const {
 
 }

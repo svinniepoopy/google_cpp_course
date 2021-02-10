@@ -10,7 +10,7 @@
 struct PostingRecord {
   int doc_id;
   int freq;
-  std::vector<std::pair<int, int>> freq_by_pagenum;
+  // std::vector<std::pair<int, int>> freq_by_pagenum;
 };
 
 struct PostingRecordCompare {

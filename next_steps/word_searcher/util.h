@@ -5,7 +5,7 @@
 
 namespace util {
     std::string scrub(std::string& s) {
-      return s
+      return s;
     }
 }
 
