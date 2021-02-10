@@ -12,13 +12,9 @@
 class Indexer {
   public:
 
-    Indexer(const std::string& ignoreddir, const std::string& corpusdir):
-      do_scrub{false},
-      ignored_words_dir{ignoreddir},
-      corpus_dir{corpusdir} {}
+    Indexer():do_scrub{false} {}
 
-
-    void processIgnoredWords();
+    void processIgnoredWords(const std::string& filename);
 
     bool processFile(const std::string& file, const int doc_id);
 
@@ -28,12 +24,8 @@ class Indexer {
 
   private:
     void processLine(const std::string& line, const int pagenum, const int doc_id);
-
-    bool do_scrub;
     
-    std::string ignored_words_dir;
-    std::string corpus_dir;
-
+    bool do_scrub;
     std::unordered_set<std::string> ignored_words; 
     std::unique_ptr<Index> index = std::make_unique<Index>();
 };

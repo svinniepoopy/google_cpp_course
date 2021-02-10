@@ -3,6 +3,7 @@
 #include "util.h"
 
 #include <filesystem>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -27,7 +28,6 @@ void Indexer::processLine(
 
 }
 
-
 bool Indexer::processFile(const std::string& file, const int doc_id) {
       std::ifstream ifs{file, std::ios::in};
       if (!ifs.is_open()) {
@@ -46,10 +46,15 @@ bool Indexer::processFile(const std::string& file, const int doc_id) {
 	  line_no = 1;
 	}
       }
+
+      ifs.close();
+
+      index->updatePostingsList(doc_id);
+
       return true;
 }
 
-void Indexer::processIgnoredWords() {
+void Indexer::processIgnoredWords(const std::string& ignored_words_dir) {
   namespace fs = std::filesystem;
   std::vector<std::string> files;
   for (const auto& p: fs::directory_iterator(ignored_words_dir)) {
@@ -58,6 +63,7 @@ void Indexer::processIgnoredWords() {
   for (const auto& file:files) {
     std::ifstream ifs{file, std::ios::in};
     if (!ifs.is_open()) {
+      std::cerr << "Error opening stepwords file: " << file << std::endl;
       return; // throw exception here
     }
     while (!ifs.eof()) {
@@ -65,6 +71,7 @@ void Indexer::processIgnoredWords() {
       std::getline(ifs, word);
       ignored_words.insert(word);
     }
+    ifs.close();
   }
 }
 
@@ -73,5 +80,8 @@ void Indexer::writeToDisk() {
 }
 
 void Indexer::summarize() const {
-
+  std::cout << "Postings list has " << index->size() << " entries.\n";
+  std::ofstream ofs{"summary.txt", std::ios::trunc};
+  ofs << *index;
+  ofs.close();
 }

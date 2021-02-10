@@ -3,6 +3,7 @@
 
 #include "posting_record.h"
 
+#include <ostream>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -11,14 +12,22 @@
 
 class Index {
   public:
-    void add(const std::string& word, const PostingRecord& rec);
-
     void add(const std::string&, const int pagenum, const int doc_id);
 
-    std::vector<std::pair<int, int>> getRecords(const std::string);
+    void updatePostingsList(int doc_id);
+
+    inline size_t size() const {
+      return postings_list.size();
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Index& idx);
 
   private:
-    std::unordered_map<std::string, std::set<PostingRecord, PostingRecordCompare>> idx;
+    // mapping from doc_id to {word:freq}
+    std::unordered_map<int, std::unordered_map<std::string, int>> doc2word;
+
+    // mapping from word to an ordered list of records 
+    std::unordered_map<std::string, std::set<PostingRecord, PostingRecordCompare>> postings_list;
 };
 
 #endif // INDEX_STORE_H
