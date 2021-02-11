@@ -16,6 +16,12 @@ class Index {
 
     void updatePostingsList(int doc_id);
 
+    bool loadPostings(const std::string& indexfile);    
+
+    bool find(const std::string& w);
+
+    std::vector<std::pair<int, int>> get(const std::string& w);
+
     inline size_t size() const {
       return postings_list.size();
     }

@@ -18,9 +18,9 @@ void Indexer::processLine(
   std::istringstream istr{line};
   std::string word;
   while (istr>>word) {
-    if (do_scrub) {
-      util::scrub(word);
-    }
+
+    word = util::scrub(word);
+
     if (ignored_words.find(word) == ignored_words.end()) {
       index->add(word, pagenum, doc_id);
     }

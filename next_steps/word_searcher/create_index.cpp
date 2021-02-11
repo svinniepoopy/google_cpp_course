@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
   auto corpus_files{getCorpusFiles(text_corpus)};
   int doc_id = 1;
   for (const auto& file : corpus_files) {
-    std::cout << "processing file: " << file << '\n';
+    std::cout << "processing file: " << file << " id [" << doc_id << "]" << '\n';
     indexer->processFile(file, doc_id);
     ++doc_id;
   }
